@@ -1,0 +1,58 @@
+
+## 要求：
+
+1. 用户加密认证
+2. 允许同时多用户登录
+3. 每个用户有自己的家目录 ，且只能访问自己的家目录
+4. 对用户进行磁盘配额，每个用户的可用空间不同
+5. 允许用户在ftp server上随意切换目录(cd)
+6. 允许用户查看前目录下文件（ls)
+7. 允许上传和下载文件，保证文件一致性（hash验证保持文件一致）
+8. 文件传输过程中显示进度条（控制台下可以流畅显示，pycharm里能够显示（文件需要够大）-刷新率很低。）
+9. 附加功能：支持文件的断点续传（已写入put程序）
+
+#错误1：I_NET4 必须是元祖，而非列表报错。。。。ip,port必须整合成元祖形式才能发布端口
+D:\reportfile\Python36-32\python36.exe E:/py/work3/ftp/core/Server_init.py
+Traceback (most recent call last):
+  File "E:/py/work3/ftp/core/Server_init.py", line 6, in <module>
+    from lib import ftp_server as ser
+  File "E:\py\work3\ftp\lib\ftp_server.py", line 6, in <module>
+    from core import user_manage
+  File "E:\py\work3\ftp\core\user_manage.py", line 10, in <module>
+    from core import client
+  File "E:\py\work3\ftp\core\client.py", line 41, in <module>
+    c.connect()
+  File "E:\py\work3\ftp\core\client.py", line 15, in connect
+    self.client.connect(self.ip_port)
+ConnectionRefusedError: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+错误2：import的时候会运行一遍被调用的程序！！！！！会运行一遍被调用的程序！！！！！！会运行一遍被调用的！！！！！！！程序。
+不知道为何会这样Server_init.py  文件内容,不知道为何会调用到client去了:解决方法，把client.py换个名字。。。。治标不治本，跑了一次后又出现这种情况
+import os
+import shelve
+from conf import configure as conf
+from lib import ftp_server as ser
+server = ser.socketserver.ThreadingTCPServer(conf.PORT,ser.Myserver)
+print('启动ftp服务...')
+server.serve_forever()
+
+错误3:初始化子类没有观察父类的初始化条件，并且忘记了这里有个初始化，调试的时候断电没设置对甚至都找不到在哪初始化报错。。
+class Myserver(socketserver.BaseRequestHandler):
+
+    exit_flag = False
+    #请勿乱初始化，会报错！！！！！参数不够，写测试方法的时候发现的，调试的时候看不到，但有了这次经验以后会注意到的。
+    # def __init__(self):
+    #     self.SESSION_OK = False
+
+警告1：进度条在pycharm里不会显示的很流畅，在控制台可以显示，但是目前还是不会如何打包py项目。先在Pycharm里实现基本的功能先
+
+断点续传：已测试可以单个文件上传，断点的触发还需要合理的中断，强行关闭程序是无法进行续传的。这个可能需要到图形化界面设计一个中断按钮才能实现。。断点的实现代码已写入，暂时无法设计测试方案，强行关闭程序一定会出BUG，无法续传
+
+## 用户数据结构
+```
+{
+    "name":name,
+    "password":password,
+    "total_size":size,
+    "used_size":size,
+}
+```

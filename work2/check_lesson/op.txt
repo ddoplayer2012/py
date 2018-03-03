@@ -1,0 +1,53 @@
+选课系统：
+角色:学校、学员、课程、讲师、班级
+要求:
+1. 创建北京、上海 2 所学校     #定义学校类，可创建学校，默认初始化北京，上海
+2. 创建linux , python , go 3个课程 ， linux\py 在北京开， go 在上海开      #定义课程类，可新建课程，默认3个课程初始化,在初始化的方法里已经实现
+3. 课程包含，周期，价格，通过学校创建课程        #课程的属性，关联学校视图进行增加
+4. 通过学校创建班级， 班级关联课程、讲师         #学校视图创建班级，班级关联课程，讲师
+5. 创建学员时，选择学校，关联班级                #学员关联学校，班级
+5. 创建讲师角色时要关联学校，                    #讲师关联学校
+6. 提供两个角色接口   ---main进行选择
+6.1 学员视图， 可以注册， 交学费， 选择班级，           #输入学员名字登录 student
+6.2 讲师视图， 讲师可管理自己的班级， 上课时选择班级， 查看班级学员列表 ， 修改所管理的学员的成绩   #输入老师名字登录  teacher
+6.3 管理视图，创建讲师， 创建班级，创建课程             #学校管理员登录 admin
+7. 上面的操作产生的数据都通过pickle序列化保存到文件里   #shelve持久化
+
+笔记：http://blog.51cto.com/13522822  DAY6
+模型设计：
+
+shelve{学校名：
+    学校obj
+}
+学校obj
+{      self.school_name = school_name
+        self.school_lesson = {课程名：课程实例}
+        self.school_classes = {班级名：班级实例}
+        self.school_teacher = {教师名：教师实例}
+
+}
+班级obj
+{
+        self.classes_name = classes_name
+        self.lesson_obj = lesson_obj
+        self.classes_student = {学生名：学生实例}
+}
+课程obj{
+        self.lesson_name = lesson_name
+        self.lesson_price = lesson_price
+        self.lesson_period = lesson_period
+}
+
+学生obj{
+        self.student_name = student_name
+        self.student_pass = student_pass
+        self.student_classes = student_classes
+        self.student_grade = 0
+}
+
+
+
+把check_lesson设置为source root
+操作方法：运行start.py
+后面根据菜单进行操作即可
+
